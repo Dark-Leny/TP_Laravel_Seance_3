@@ -2,74 +2,104 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Livre;
 use App\Models\Categorie;
+use Illuminate\Http\Request;
 
 class LivreController extends Controller
 {
     /**
-     * Affichage liste avec base de données SQLite
-     * SÉANCE 2 : Utiliser Eloquent pour récupérer les données depuis SQLite
+     * Afficher la liste des livres
      */
     public function index()
     {
-        // Récupération des livres avec leurs catégories via Eloquent
-        $livres = Livre::with('categorie')->get();
+        $livres = Livre::with('categorie')->orderBy('titre')->paginate(12);
+        $categories = Categorie::orderBy('nom')->get();
 
-        // Récupération des catégories pour le filtre
-        $categories = Categorie::actives()->get();
-
-        $statistiques = [
-            'totalLivres' => Livre::count(),
-            'livresDisponibles' => Livre::disponible()->count(),
-            'totalCategories' => Categorie::actives()->count()
-        ];
-
-        return view('livres.index', [
-            'livres' => $livres,
-            'categories' => $categories,
-            'stats' => $statistiques,
-            'total' => $livres->count()
-        ]);
+        return view('livres.index', compact('livres', 'categories'));
     }
 
     /**
-     * Affichage détail avec paramètre d'URL et Eloquent
-     * SÉANCE 2 : Utiliser Eloquent pour récupérer un enregistrement spécifique
+     * Afficher le formulaire de création
      */
-    public function show($id)
+    public function create()
     {
-        // Conversion de l'ID en entier pour éviter les erreurs
-        $id = (int) $id;
-
-        // Récupération du livre avec sa catégorie via Eloquent
-        $livre = Livre::with('categorie')->findOrFail($id);
-
-        return view('livres.show', [
-            'livre' => $livre
-        ]);
+        $categories = Categorie::orderBy('nom')->get();
+        return view('livres.create', compact('categories'));
     }
 
     /**
-     * Recherche de livres avec Eloquent
-     * SÉANCE 2 : Utiliser les scopes Eloquent pour la recherche
+     * Sauvegarder un nouveau livre
      */
-    public function search(Request $request)
+    public function store(Request $request)
     {
-        $query = $request->get('q', '');
-
-        // Utilisation des scopes Eloquent pour la recherche
-        $livres = Livre::with('categorie')
-            ->when($query, function ($queryBuilder, $searchTerm) {
-                return $queryBuilder->recherche($searchTerm);
-            })
-            ->get();
-
-        return view('livres.search', [
-            'livres' => $livres,
-            'query' => $query,
-            'total' => $livres->count()
+        $validated = $request->validate([
+            'titre' => 'required|string|max:255',
+            'auteur' => 'required|string|max:255', // 📝 Note: En séance 4, nous transformerons ceci en relation vers un modèle Auteur
+            'isbn' => 'required|string|unique:livres|size:13',
+            'categorie_id' => 'required|exists:categories,id',
+            'resume' => 'nullable|string|max:1000',
+            'date_publication' => 'required|date|before_or_equal:today',
+            'pages' => 'required|integer|min:1|max:9999',
+            'disponible' => 'boolean'
         ]);
+
+        $livre = Livre::create($validated);
+
+        return redirect()
+            ->route('livres.show', $livre)
+            ->with('success', 'Livre créé avec succès !');
+    }
+
+    /**
+     * Afficher un livre spécifique
+     */
+    public function show(Livre $livre)
+    {
+        return view('livres.show', compact('livre'));
+    }
+
+    /**
+     * Afficher le formulaire d'édition
+     */
+    public function edit(Livre $livre)
+    {
+        $categories = Categorie::orderBy('nom')->get();
+        return view('livres.edit', compact('livre', 'categories'));
+    }
+
+    /**
+     * Mettre à jour un livre
+     */
+    public function update(Request $request, Livre $livre)
+    {
+        $validated = $request->validate([
+            'titre' => 'required|string|max:255',
+            'auteur' => 'required|string|max:255', // 📝 Note: En séance 4, nous transformerons ceci en relation vers un modèle Auteur
+            'isbn' => 'required|string|size:13|unique:livres,isbn,' . $livre->id,
+            'categorie_id' => 'required|exists:categories,id',
+            'resume' => 'nullable|string|max:1000',
+            'date_publication' => 'required|date|before_or_equal:today',
+            'pages' => 'required|integer|min:1|max:9999',
+            'disponible' => 'boolean'
+        ]);
+
+        $livre->update($validated);
+
+        return redirect()
+            ->route('livres.show', $livre)
+            ->with('success', 'Livre mis à jour avec succès !');
+    }
+
+    /**
+     * Supprimer un livre
+     */
+    public function destroy(Livre $livre)
+    {
+        $livre->delete();
+
+        return redirect()
+            ->route('livres.index')
+            ->with('success', 'Livre supprimé avec succès !');
     }
 }

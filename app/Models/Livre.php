@@ -9,24 +9,21 @@ class Livre extends Model
 {
     use HasFactory;
 
-    protected $table = 'livres';
 
     protected $fillable = [
         'titre',
         'auteur',
-        'annee',
-        'nb_pages',
         'isbn',
+        'categorie_id',
         'resume',
-        'couverture',
-        'disponible',
-        'categorie_id'
+        'date_publication',
+        'pages',
+        'disponible'
     ];
 
     protected $casts = [
-        'disponible' => 'boolean',
-        'annee' => 'integer',
-        'nb_pages' => 'integer'
+        'date_publication' => 'date',
+        'disponible' => 'boolean'
     ];
 
     /**
@@ -46,12 +43,9 @@ class Livre extends Model
             ->orWhere('auteur', 'like', '%' . $terme . '%');
     }
 
-    /**
-     * Un livre appartient à une catégorie
-     */
     public function categorie()
     {
-        return $this->belongsTo(Categorie::class, 'categorie_id');
+        return $this->belongsTo(Categorie::class);
     }
 
     /**

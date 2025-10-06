@@ -15,8 +15,8 @@ use App\Http\Controllers\LivreController;
 | - Contrôleurs
 */
 
-Route::get('/test-debug', function () { 
-    return 'Laravel fonctionne !'; 
+Route::get('/test-debug', function () {
+    return 'Laravel fonctionne !';
 });
 
 // 1. Accueil - Route simple
@@ -28,13 +28,9 @@ Route::get('/about', function () {
 })->name('about');
 
 // 3. Liste livres - Route vers contrôleur
-Route::get('/livres', [LivreController::class, 'index'])->name('livres.index');
 
-// 4. Détail livre - Route avec paramètre
-Route::get('/livre/{id}', [LivreController::class, 'show'])->name('livres.show');
-
-// Recherche livre
-Route::get('/recherche', [LivreController::class, 'search'])->name('livres.search');
+// Routes resource pour les livres
+Route::resource('livres', LivreController::class);
 
 // Route de démonstration pour comprendre les paramètres
 Route::get('/demo/hello/{nom?}', function ($nom = 'Étudiant') {
