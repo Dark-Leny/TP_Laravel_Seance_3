@@ -2,22 +2,13 @@
 
 namespace App\Exports;
 
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
+use App\Models\Livre;
+use Maatwebsite\Excel\Concerns\FromCollection;
 
-class LivresExport implements FromView
+class LivresExport implements FromCollection
 {
-    protected $livres;
-
-    public function __construct($livres)
+    public function collection()
     {
-        $this->livres = $livres;
-    }
-
-    public function view(): View
-    {
-        return view('livres.export_excel', [
-            'livres' => $this->livres
-        ]);
+        return Livre::all();
     }
 }
