@@ -80,11 +80,9 @@
                 <i class="fas fa-book-open me-2"></i>
                 <strong>BiblioTech</strong>
             </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -93,7 +91,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                                                <a class="nav-link" href="{{ route('livres.index') }}">
+                        <a class="nav-link" href="{{ route('livres.index') }}">
                             <i class="fas fa-book"></i> Catalogue
                         </a>
                     </li>
@@ -103,11 +101,16 @@
                         </a>
                     </li>
                 </ul>
-                
-                {{-- Barre de recherche --}}
-                <form class="d-flex" action="{{ route('livres.search') }}" method="GET">
-                    <input class="form-control me-2" type="search" name="q" 
-                           placeholder="Rechercher un livre..." value="{{ request('q') }}">
+                {{-- Recherche rapide mobile --}}
+                <form class="d-flex d-lg-none mt-2" action="{{ route('livres.search') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Recherche rapide..." value="{{ request('q') }}">
+                    <button class="btn btn-outline-light" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                {{-- Recherche desktop --}}
+                <form class="d-flex d-none d-lg-flex" action="{{ route('livres.search') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Rechercher un livre..." value="{{ request('q') }}">
                     <button class="btn btn-outline-light" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
@@ -115,6 +118,36 @@
             </div>
         </div>
     </nav>
+
+    {{-- Bottom navigation mobile --}}
+    <div class="bottom-nav d-lg-none fixed-bottom bg-primary text-white shadow-lg">
+        <div class="container py-2 d-flex justify-content-around">
+            <a href="{{ route('home') }}" class="text-white text-center">
+                <i class="fas fa-home fa-lg"></i><br><small>Accueil</small>
+            </a>
+            <a href="{{ route('livres.index') }}" class="text-white text-center">
+                <i class="fas fa-book fa-lg"></i><br><small>Catalogue</small>
+            </a>
+            <a href="{{ route('livres.create') }}" class="text-white text-center">
+                <i class="fas fa-plus fa-lg"></i><br><small>Ajouter</small>
+            </a>
+        </div>
+    </div>
+    /* Responsive breadcrumb */
+    @media (max-width: 768px) {
+        .breadcrumb {
+            font-size: 0.95em;
+            padding: 0.5rem 0.75rem;
+        }
+        .bottom-nav {
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            z-index: 1050;
+        }
+        .navbar .form-control {
+            font-size: 0.95em;
+        }
+    }
 
     {{-- Fil d'Ariane --}}
     @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
