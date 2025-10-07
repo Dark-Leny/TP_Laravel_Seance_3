@@ -11,13 +11,13 @@ class LivreController extends Controller
     /**
      * Afficher la liste des livres
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Livre::with('categorie');
 
         // Recherche multi-critères (titre, auteur, résumé)
-        if (request()->filled('search')) {
-            $searchTerm = request('search');
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereRaw('LOWER(titre) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
                     ->orWhereRaw('LOWER(auteur) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
@@ -26,24 +26,24 @@ class LivreController extends Controller
         }
 
         // Filtre par catégorie
-        if (request()->filled('categorie')) {
-            $query->where('categorie_id', request('categorie'));
+        if ($request->filled('categorie')) {
+            $query->where('categorie_id', $request->categorie);
         }
 
         // Filtre par disponibilité
-        if (request()->has('disponible')) {
-            $query->where('disponible', request('disponible'));
+        if ($request->has('disponible')) {
+            $query->where('disponible', $request->disponible);
         }
 
         // Filtre par période de publication
-        if (request()->filled('date_debut') && request()->filled('date_fin')) {
-            $query->whereBetween('date_publication', [request('date_debut'), request('date_fin')]);
+        if ($request->filled('date_debut') && $request->filled('date_fin')) {
+            $query->whereBetween('date_publication', [$request->date_debut, $request->date_fin]);
         }
 
         // Tri dynamique
         $allowedSorts = ['titre', 'auteur', 'date_publication', 'pages'];
-        $sortField = in_array(request('sort'), $allowedSorts) ? request('sort') : 'titre';
-        $sortDirection = in_array(request('direction'), ['asc', 'desc']) ? request('direction') : 'asc';
+        $sortField = in_array($request->get('sort'), $allowedSorts) ? $request->get('sort') : 'titre';
+        $sortDirection = in_array($request->get('direction'), ['asc', 'desc']) ? $request->get('direction') : 'asc';
 
         $livres = $query->orderBy($sortField, $sortDirection)->paginate(12)->withQueryString();
         $categories = Categorie::orderBy('nom')->get();
