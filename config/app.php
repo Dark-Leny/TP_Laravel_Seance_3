@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -159,7 +158,7 @@ return [
 
         /* Package Service Providers... */
         Barryvdh\DomPDF\ServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
+        // Maatwebsite\Excel\ExcelServiceProvider::class, // retiré car le package n'est plus installé
 
         /* Application Service Providers... */
         App\Providers\AppServiceProvider::class,
@@ -219,7 +218,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         // Ajout des aliases pour PDF et Excel
         'PDF' => Barryvdh\DomPDF\Facades\Pdf::class,
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        // 'Excel' => Maatwebsite\Excel\Facades\Excel::class, // retiré car le package n'est plus installé
     ],
-
 ];

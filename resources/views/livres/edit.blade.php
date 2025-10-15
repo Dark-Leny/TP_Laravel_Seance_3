@@ -98,7 +98,7 @@
                                            class="form-control @error('date_publication') is-invalid @enderror" 
                                            id="date_publication" 
                                            name="date_publication" 
-                                           value="{{ old('date_publication', $livre->date_publication->format('Y-m-d')) }}"
+                                           value="{{ old('date_publication', $livre->date_publication ? $livre->date_publication->format('Y-m-d') : '') }}"
                                            max="{{ date('Y-m-d') }}">
                                     @error('date_publication')
                                         <div class="invalid-feedback">{{ $message }}</div>
