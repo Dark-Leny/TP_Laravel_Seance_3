@@ -28,7 +28,7 @@
                                <span class="badge bg-info">{{ $livre->categorie->nom }}</span></p>
                             <p><strong>📄 Pages :</strong> {{ $livre->pages }}</p>
                             <p><strong>📅 Date de publication :</strong> 
-                               {{ $livre->date_publication->format('d/m/Y') }}</p>
+                               {{ $livre->date_publication ? $livre->date_publication->format('d/m/Y') : 'N/A' }}</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>📚 ISBN :</strong> {{ $livre->isbn }}</p>

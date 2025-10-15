@@ -58,7 +58,7 @@
                             <strong>📂 Catégorie :</strong> 
                             <span class="badge bg-info">{{ $livre->categorie->nom }}</span><br>
                             <strong>📄 Pages :</strong> {{ $livre->pages }}<br>
-                            <strong>📅 Publication :</strong> {{ $livre->date_publication->format('Y') }}
+                            <strong>📅 Publication :</strong> {{ $livre->date_publication ? $livre->date_publication->format('Y') : 'N/A' }}
                         </p>
                         <div class="mt-auto">
                             @if($livre->disponible)

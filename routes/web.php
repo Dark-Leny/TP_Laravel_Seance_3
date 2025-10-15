@@ -32,6 +32,9 @@ Route::get('/about', function () {
 // Routes resource pour les livres
 Route::resource('livres', LivreController::class);
 
+// Route de recherche avancée pour les livres
+Route::get('/livres/search', [LivreController::class, 'search'])->name('livres.search');
+
 // Route de démonstration pour comprendre les paramètres
 Route::get('/demo/hello/{nom?}', function ($nom = 'Étudiant') {
     return view('demo.hello', ['nom' => $nom]);
